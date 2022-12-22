@@ -23,8 +23,10 @@ if __name__ == '__main__':
     jd_seckill = JdSeckill()
     choice_function = input('请选择:')
     if choice_function == '1':
+        # 预约
         jd_seckill.reserve()
     elif choice_function == '2':
+        # 抢购
         jd_seckill.seckill_by_proc_pool()
     else:
         print('没有此功能')

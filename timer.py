@@ -17,15 +17,33 @@ class Timer(object):
 
         self.diff_time = self.local_jd_time_diff()
 
+    def get_headers(self):
+        return {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.35",
+                "Accept": "text/html,application/xhtml+xml,application/xml;"
+                          "q=0.9,image/webp,image/apng,*/*;"
+                          "q=0.8,application/signed-exchange;"
+                          "v=b3",
+                "Connection": "keep-alive"}
     def jd_time(self):
+        # """
+        # 从京东服务器获取时间毫秒
+        # :return:
+        # """
+        # # url = 'https://a.jd.com//ajax/queryServerData.html' # 已失效
+        # url = 'https://api.m.jd.com/client.action?functionId=queryMaterialProducts&client=wh5'
+        # ret = requests.get(url, headers=self.get_headers(), allow_redirects=False, verify=False).text
+        # js = json.loads(ret)
+        # return int(js["currentTime2"])
         """
         从京东服务器获取时间毫秒
         :return:
         """
-        url = 'https://a.jd.com//ajax/queryServerData.html'
-        ret = requests.get(url).text
-        js = json.loads(ret)
-        return int(js["serverTime"])
+        url = 'https://api.m.jd.com/client.action?functionId=queryMaterialProducts&client=wh5'
+        ret = requests.get(url, headers=(self.get_headers()), allow_redirects=False, verify=False)
+        # js = json.loads(ret.text)
+        # if js.get('currentTime2'):
+        #     return int(js['currentTime2'])
+        return int(ret.headers.get('X-API-Request-Id').split('-')[2]) + 2
 
     def local_time(self):
         """

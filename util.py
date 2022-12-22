@@ -11,7 +11,7 @@ from email.mime.image import MIMEImage
 
 from config import global_config
 from jd_logger import logger
-
+from PIL import Image
 
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",
@@ -82,6 +82,7 @@ def get_random_useragent():
 
 def wait_some_time():
     time.sleep(random.randint(100, 300) / 1000)
+    # time.sleep(random.randint(100, 300) / 1000 * 100)
 
 
 def send_wechat(message):
@@ -122,6 +123,25 @@ def save_image(resp, image_file):
         for chunk in resp.iter_content(chunk_size=1024):
             f.write(chunk)
 
+def convert_image(image_file: str, output_path):
+    """
+    转化一下图片格式，加上白色背景
+    Args:
+        image_file (str): _description_
+    """
+    raw_image = Image.open(image_file)
+    raw_image = raw_image.convert("RGB")
+    size = raw_image.size
+    print(raw_image.size)
+    # 创建一个白色背景图片，大小为原来图片的1.44倍,方便扫码
+    bg_image = Image.new(
+        raw_image.mode,
+        size=(int(size[0] * 1.2), int(size[1] * 1.2)),
+        color='white'
+    )
+    bg_image.paste(raw_image, (int(size[0] * 0.1), int(size[1] * 0.1)))
+    # bg_image.show()
+    bg_image.save(output_path)
 
 class Email():
 
